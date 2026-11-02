@@ -1,18 +1,18 @@
 require('dotenv').config(); // carga las variables del archivo .env
 const express = require('express');
 const conectarDB = require('./db');
-const Plato = require('./models/Plato');
+const platosRoutes = require('./routes/platos.routes');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(express.json()); // permite recibir datos en formato JSON
 
-// Ruta de prueba: devuelve todos los platos
-app.get('/api/platos', async (req, res) => {
-  const platos = await Plato.find();
-  res.json(platos);
-});
+// Todas las rutas de platos empiezan con /api/platos
+app.use('/api/platos', platosRoutes);
+
+// Cualquier otra ruta responde 404
+app.use((req, res) => res.status(404).json({ error: 'Ruta no encontrada' }));
 
 // Primero se conecta a la base y después levanta el servidor
 conectarDB()
