@@ -1,0 +1,97 @@
+@baseUrl = http://localhost:3000/api/platos
+
+### ===== LECTURAS =====
+
+### Listar todos los platos
+GET {{baseUrl}}
+
+### Filtrar platos veganos
+GET {{baseUrl}}?veganos=true
+
+### Filtrar aptos para celíacos con hasta 500 calorías
+GET {{baseUrl}}?celiacos=true&maxCalorias=500
+
+### Filtrar aptos para diabéticos
+GET {{baseUrl}}?diabeticos=true
+
+### ===== ALTA =====
+
+### Crear un plato nuevo
+# @name crear
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "nombre": "Tarta de verduras",
+  "descripcion": "Tarta de acelga, zapallito y queso con masa casera.",
+  "ingredientes": ["harina", "acelga", "zapallito", "queso", "huevo"],
+  "precio": 8900,
+  "aptoCeliacos": false,
+  "aptoVeganos": false,
+  "aptoDiabeticos": true,
+  "calorias": 540,
+  "imagen": "https://placehold.co/600x400?text=Tarta+de+verduras"
+}
+
+### Buscar el plato recién creado por su id
+GET {{baseUrl}}/{{crear.response.body._id}}
+
+### ===== MODIFICACIÓN =====
+
+### Modificar precio y calorías del plato creado
+PUT {{baseUrl}}/{{crear.response.body._id}}
+Content-Type: application/json
+
+{
+  "precio": 9500,
+  "calorias": 510
+}
+
+### ===== BAJA =====
+
+### Eliminar el plato creado
+DELETE {{baseUrl}}/{{crear.response.body._id}}
+
+### Buscarlo de nuevo (tiene que dar 404)
+GET {{baseUrl}}/{{crear.response.body._id}}
+
+### ===== CASOS DE ERROR =====
+
+### Alta con datos inválidos (400): falta el nombre, precio negativo, URL inválida
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "descripcion": "Plato con errores",
+  "ingredientes": [],
+  "precio": -100,
+  "calorias": 300,
+  "imagen": "no-es-una-url"
+}
+
+### Alta con nombre repetido (409)
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "nombre": "Provoleta a la parrilla",
+  "descripcion": "Duplicado a propósito",
+  "ingredientes": ["queso provolone"],
+  "precio": 8400,
+  "calorias": 450,
+  "imagen": "https://placehold.co/600x400?text=Provoleta"
+}
+
+### Modificación con precio inválido (400)
+PUT {{baseUrl}}/{{crear.response.body._id}}
+Content-Type: application/json
+
+{
+  "precio": -50
+}
+
+### Id con formato inválido (400)
+GET {{baseUrl}}/123
+
+### Ruta inexistente (404)
+GET http://localhost:3000/api/bebidas
