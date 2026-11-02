@@ -62,7 +62,7 @@ async function actualizar(req, res) {
     const plato = await Plato.findByIdAndUpdate(
       req.params.id,
       { $set: req.body },
-      { new: true, runValidators: true }
+      { returnDocument: 'after', runValidators: true }
     );
     if (!plato) return res.status(404).json({ error: 'Plato no encontrado' });
     res.json(plato);
